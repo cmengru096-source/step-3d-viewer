@@ -1,0 +1,115 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="STEP 3D Viewer" Width="1140" Height="740" MinWidth="760" MinHeight="560" AllowDrop="True"
+        WindowStartupLocation="CenterScreen" FontFamily="Microsoft YaHei UI" FontSize="13"
+        Background="#F4F7FB" UseLayoutRounding="True" TextOptions.TextFormattingMode="Display">
+  <Window.Resources>
+    <Style x:Key="ActionButton" TargetType="Button">
+      <Setter Property="Foreground" Value="#203752"/>
+      <Setter Property="Background" Value="#FFFFFF"/>
+      <Setter Property="BorderBrush" Value="#D1DDEB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="Padding" Value="11,6"/>
+      <Setter Property="Margin" Value="0,0,7,0"/>
+      <Setter Property="MinHeight" Value="34"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Surface" CornerRadius="5" BorderThickness="{TemplateBinding BorderThickness}"
+                    BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Surface" Property="Background" Value="#EAF3FC"/>
+                <Setter TargetName="Surface" Property="BorderBrush" Value="#75A6D4"/>
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Surface" Property="Background" Value="#D8E9F9"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+  <Grid Background="#F4F7FB">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="207"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <Grid Grid.Column="0" Background="#172B43">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <StackPanel Margin="17,22,17,10">
+        <TextBlock Text="STEP" FontFamily="Segoe UI" FontSize="35" FontWeight="SemiBold" Foreground="#F5FAFF"/>
+        <TextBlock x:Name="ViewerName" Foreground="#B9CEE2" Margin="1,1,0,19"/>
+        <Button x:Name="OpenButton" Style="{StaticResource ActionButton}" Margin="0" FontWeight="SemiBold" MinHeight="40"
+                Background="#E5F3FF" BorderBrush="#83B8E6"/>
+        <TextBlock x:Name="DropHint" Foreground="#B9CEE2" Margin="1,7,0,16" TextWrapping="Wrap"/>
+        <Button x:Name="SampleButton" Style="{StaticResource ActionButton}" Margin="0"
+                Background="#EAF0F7" BorderBrush="#64809B"/>
+      </StackPanel>
+      <StackPanel Grid.Row="1" Margin="18,0,17,23" TextBlock.Foreground="#CDDDEE">
+        <Border BorderThickness="0,1,0,0" BorderBrush="#38526B" Margin="0,0,0,13"/>
+        <TextBlock x:Name="RotateHint" Margin="0,0,0,6"/>
+        <TextBlock x:Name="PanHint" Margin="0,0,0,6"/>
+        <TextBlock x:Name="ZoomHint" Margin="0,0,0,6"/>
+        <TextBlock x:Name="ResetHint"/>
+        <Button x:Name="LicensesButton" Style="{StaticResource ActionButton}" FontSize="11" HorizontalAlignment="Left"
+                MinHeight="24" Padding="5,2" Margin="0,12,0,0"/>
+      </StackPanel>
+    </Grid>
+    <Grid Grid.Column="1" Margin="22,19,22,15">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Margin="0,0,12,0">
+          <TextBlock x:Name="AssemblyTitle" FontSize="25" FontWeight="SemiBold" Foreground="#152B44" TextTrimming="CharacterEllipsis"/>
+          <TextBlock x:Name="SourceName" Margin="1,4,0,0" Foreground="#4A6179" TextTrimming="CharacterEllipsis"/>
+        </StackPanel>
+        <ComboBox x:Name="LanguageChoice" Grid.Column="1" Width="105" VerticalAlignment="Top" Margin="0,5,0,0"
+                  AutomationProperties.Name="Language / 语言">
+          <ComboBoxItem Content="English"/>
+          <ComboBoxItem Content="简体中文"/>
+        </ComboBox>
+      </Grid>
+      <WrapPanel Grid.Row="1" Margin="0,0,0,11">
+        <Button x:Name="FitButton" Style="{StaticResource ActionButton}"/>
+        <Button x:Name="FrontButton" Style="{StaticResource ActionButton}"/>
+        <Button x:Name="TopButton" Style="{StaticResource ActionButton}"/>
+        <Button x:Name="EndButton" Style="{StaticResource ActionButton}" Margin="0,0,17,0"/>
+        <Button x:Name="LeftEndButton" Style="{StaticResource ActionButton}"/>
+        <Button x:Name="RightEndButton" Style="{StaticResource ActionButton}"/>
+      </WrapPanel>
+      <Border Grid.Row="2" BorderThickness="1" BorderBrush="#CDD9E6" CornerRadius="8" Background="#EAF0F7">
+        <Grid x:Name="Canvas" ClipToBounds="True" Focusable="True" Background="Transparent">
+          <Viewport3D x:Name="Scene" IsHitTestVisible="False" ClipToBounds="True"/>
+          <Border Background="#F5F8FC" BorderBrush="#CFDCE8" BorderThickness="1" CornerRadius="5"
+                  VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15" Padding="9,5" IsHitTestVisible="False">
+            <TextBlock x:Name="ViewName" Foreground="#33536F"/>
+          </Border>
+        </Grid>
+      </Border>
+      <StackPanel Grid.Row="3" Margin="1,10,0,0">
+        <TextBlock x:Name="LoadStatus" Foreground="#2F5C88" Margin="0,0,0,5" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+        <DockPanel LastChildFill="False">
+          <TextBlock x:Name="Extent" Foreground="#4A6179"/>
+          <TextBlock x:Name="ZoomText" DockPanel.Dock="Right" Foreground="#4A6179"/>
+        </DockPanel>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Window>

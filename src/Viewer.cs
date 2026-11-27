@@ -12,8 +12,8 @@ using System.Windows.Media.Media3D;
 [assembly: AssemblyTitle("STEP 3D Viewer")]
 [assembly: AssemblyDescription("Portable offline viewer for STEP and STP files")]
 [assembly: AssemblyProduct("STEP 3D Viewer")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.1.0.0")]
+[assembly: AssemblyFileVersion("2.1.0.0")]
 
 namespace AssemblyViewer
 {
@@ -50,6 +50,8 @@ namespace AssemblyViewer
         private readonly ModelVisual3D modelVisual = new ModelVisual3D();
         private readonly OrthographicCamera camera = new OrthographicCamera();
         private readonly LoadedModel sample = MeshReader.Read("Viewer.Sample");
+        private LoadedModel left;
+        private LoadedModel right;
         private enum Angle { Full, Front, Top, End, LeftEnd, RightEnd, Free }
         private Angle view;
 
@@ -72,6 +74,8 @@ namespace AssemblyViewer
             scene.Children.Add(modelVisual);
 
             Element<Button>("SampleButton").Click += (sender, e) => ShowSample();
+            Element<RadioButton>("LeftAssembly").Checked += (sender, e) => { if (!updatingSelection) ShowAssembly(true); };
+            Element<RadioButton>("RightAssembly").Checked += (sender, e) => { if (!updatingSelection) ShowAssembly(false); };
             Element<Button>("FitButton").Click += (sender, e) => ResetView();
             Element<Button>("FrontButton").Click += (sender, e) => SetView(-90, 0, Angle.Front);
             Element<Button>("TopButton").Click += (sender, e) => SetView(-90, 90, Angle.Top);

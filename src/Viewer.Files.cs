@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +17,10 @@ namespace AssemblyViewer
         private CancellationTokenSource pendingImport;
         private string pendingName;
         private bool showingSample;
+        private bool currentIsLeft = true;
+        private bool updatingSelection;
+        private string leftSourceName;
+        private string rightSourceName;
         private string sourceName;
         private int partCount;
 
@@ -42,7 +47,37 @@ namespace AssemblyViewer
         {
             CancelImport();
             SetImportState(ImportState.Idle);
+            SelectAssemblyButton(null);
             ShowModel(sample, "stepped-block.step", true);
+        }
+
+        private void ShowAssembly(bool isLeft)
+        {
+            var model = isLeft ? left : right;
+            if (model == null) return;
+            CancelImport();
+            SetImportState(ImportState.Idle);
+            currentIsLeft = isLeft;
+            ShowModel(model, isLeft ? leftSourceName : rightSourceName, false);
+        }
+
+        private void SelectAssemblyButton(bool? isLeft)
+        {
+            updatingSelection = true;
+            try
+            {
+                Element<RadioButton>("LeftAssembly").IsChecked = isLeft == true;
+                Element<RadioButton>("RightAssembly").IsChecked = isLeft == false;
+            }
+            finally { updatingSelection = false; }
+        }
+
+        private bool ImportSide(string filename)
+        {
+            var name = Path.GetFileNameWithoutExtension(filename);
+            var isLeft = name.Contains("左") || Regex.IsMatch(name, @"(?:^|[^a-z])left(?:[^a-z]|$)|(?:^|[^\p{L}])лев\p{L}*", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            var isRight = name.Contains("右") || Regex.IsMatch(name, @"(?:^|[^a-z])right(?:[^a-z]|$)|(?:^|[^\p{L}])прав\p{L}*", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+            return isLeft == isRight ? currentIsLeft : isLeft;
         }
 
         private void ShowModel(LoadedModel model, string name, bool isSample)
@@ -92,6 +127,7 @@ namespace AssemblyViewer
             }
 
             pendingName = Path.GetFileName(filename);
+            var isLeft = ImportSide(filename);
             var request = new CancellationTokenSource();
             pendingImport = request;
             SetImportState(ImportState.Opening);
@@ -99,6 +135,18 @@ namespace AssemblyViewer
             {
                 var result = await Task.Run(() => StepImporter.Read(filename, request.Token), request.Token);
                 if (pendingImport != request) return;
+                if (isLeft)
+                {
+                    left = result;
+                    leftSourceName = pendingName;
+                }
+                else
+                {
+                    right = result;
+                    rightSourceName = pendingName;
+                }
+                currentIsLeft = isLeft;
+                SelectAssemblyButton(isLeft);
                 ShowModel(result, pendingName, false);
                 SetImportState(ImportState.Idle);
             }

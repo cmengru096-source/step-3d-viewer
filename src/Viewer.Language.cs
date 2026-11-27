@@ -68,7 +68,11 @@ namespace AssemblyViewer
             Element<TextBlock>("ZoomHint").Text = Translate("Scroll · Zoom", "滚动滚轮 · 缩放");
             Element<TextBlock>("ResetHint").Text = Translate("Double-click · Reset", "双击视图区 · 复位");
             Element<Button>("OpenButton").Content = Translate("Open STEP…", "打开 STEP…");
+            Element<Button>("OpenButton").ToolTip = Translate("Left/right filenames update that side. Other filenames update the selected assembly.", "文件名含左／右时更新对应件，其他文件更新当前选中的件。");
             Element<Button>("SampleButton").Content = Translate("Open demo model", "打开示例模型");
+            Element<TextBlock>("AssembliesLabel").Text = Translate("Loaded assemblies", "已加载装配体");
+            Element<RadioButton>("LeftAssembly").Content = Translate("Left assembly", "左件");
+            Element<RadioButton>("RightAssembly").Content = Translate("Right assembly", "右件");
             Element<Button>("FitButton").Content = Translate("Reset view", "复位");
             Element<Button>("FrontButton").Content = Translate("Front", "正视");
             Element<Button>("TopButton").Content = Translate("Top", "俯视");
@@ -85,6 +89,10 @@ namespace AssemblyViewer
         private void UpdateModelLabels()
         {
             Element<Button>("EndButton").Content = IsElongated ? Translate("End view", "端视") : Translate("Right view", "右视");
+            Element<RadioButton>("LeftAssembly").IsEnabled = left != null;
+            Element<RadioButton>("RightAssembly").IsEnabled = right != null;
+            Element<RadioButton>("LeftAssembly").ToolTip = leftSourceName ?? Translate("Open a file with left in its name to load this assembly.", "打开文件名含左的文件以加载此件。");
+            Element<RadioButton>("RightAssembly").ToolTip = rightSourceName ?? Translate("Open a file with right in its name to load this assembly.", "打开文件名含右的文件以加载此件。");
             if (sourceName == null) return;
             var title = showingSample ? Translate("Stepped block", "阶梯块") : Path.GetFileNameWithoutExtension(sourceName);
             Element<TextBlock>("AssemblyTitle").Text = title;
